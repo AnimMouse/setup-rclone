@@ -1,0 +1,21 @@
+name: Test setup-rclone
+on:
+  push:
+    paths:
+      - action.yml
+      - .github/workflows/test.yml
+      
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Rclone using setup-rclone
+        uses: AnimMouse/setup-rclone@main
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+          
+      - name: Test Rclone by listing remotes
+        run: rclone listremotes
+        
+      - name: Test Rclone by listing test remote
+        run: 'rclone ls setup-gdrive-test:'

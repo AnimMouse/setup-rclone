@@ -1,0 +1,39 @@
+name: Setup Rclone
+description: Setup/Install Rclone for GitHub Actions
+branding:
+  icon: cloud
+  color: blue
+inputs:
+  rclone_config:
+    description: Rclone config file encoded in base64
+    required: true
+    
+runs:
+  using: composite
+  steps:
+    - name: Download Rclone for Linux
+      shell: bash
+      working-directory: ${{ runner.temp }}
+      run: aria2c -x 16 "https://downloads.rclone.org/rclone-current-linux-amd64.zip"
+      
+    - name: Extract Rclone
+      shell: bash
+      working-directory: ${{ runner.temp }}
+      run: 7z e "rclone-current-linux-amd64.zip" rclone -r
+      
+    - name: Install gdrive on /usr/local/bin/
+      shell: bash
+      run: mv $RUNNER_TEMP/rclone /usr/local/bin/
+      
+    - name: Sign in to Rclone using Rclone config
+      shell: bash
+      env:
+        rclone_config: ${{ inputs.rclone_config }}
+      run: |
+        mkdir $XDG_CONFIG_HOME/rclone/
+        echo $rclone_config | base64 -d > $XDG_CONFIG_HOME/rclone/rclone.conf
+        
+    - name: Clean up
+      shell: bash
+      working-directory: ${{ runner.temp }}
+      run: rm rclone-current-linux-amd64.zip
