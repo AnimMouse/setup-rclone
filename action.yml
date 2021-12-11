@@ -12,28 +12,42 @@ runs:
   using: composite
   steps:
     - name: Download Rclone for Linux
+      if: runner.os == 'Linux'
       shell: bash
       working-directory: ${{ runner.temp }}
-      run: aria2c -x 16 "https://downloads.rclone.org/rclone-current-linux-amd64.zip"
+      run: $GITHUB_ACTION_PATH/scripts/Linux.sh
       
-    - name: Extract Rclone
+    - name: Download Rclone for Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      working-directory: ${{ runner.temp }}
+      run: $env:GITHUB_ACTION_PATH\scripts\Windows.ps1
+      
+    - name: Download Rclone for macOS
+      if: runner.os == 'macOS'
       shell: bash
       working-directory: ${{ runner.temp }}
-      run: 7z e "rclone-current-linux-amd64.zip" rclone -r
+      run: $GITHUB_ACTION_PATH/scripts/macOS.sh
       
-    - name: Install gdrive on /usr/local/bin/
-      shell: bash
-      run: mv $RUNNER_TEMP/rclone /usr/local/bin/
-      
-    - name: Sign in to Rclone using Rclone config
+    - name: Install Rclone using tool cache
+      uses: AnimMouse/tool-cache@v1
+      with:
+        folder_name: Rclone
+        
+    - name: Sign in to Rclone using Rclone config on Unix-like
+      if: runner.os == 'Linux' || runner.os == 'macOS'
       shell: bash
       env:
         rclone_config: ${{ inputs.rclone_config }}
       run: |
-        mkdir $XDG_CONFIG_HOME/rclone/
-        echo $rclone_config | base64 -d > $XDG_CONFIG_HOME/rclone/rclone.conf
+        mkdir ~/.config/rclone/
+        echo $rclone_config | base64 -d > ~/.config/rclone/rclone.conf
         
-    - name: Clean up
+    - name: Sign in to Rclone using Rclone config on Windows
+      if: runner.os == 'Windows'
       shell: bash
-      working-directory: ${{ runner.temp }}
-      run: rm rclone-current-linux-amd64.zip
+      env:
+        rclone_config: ${{ inputs.rclone_config }}
+      run: |
+        mkdir $APPDATA\rclone\
+        echo $rclone_config | base64 -d > $APPDATA\rclone\rclone.conf
