@@ -21,7 +21,7 @@ runs:
       if: runner.os == 'Windows'
       shell: pwsh
       working-directory: ${{ runner.temp }}
-      run: $env:GITHUB_ACTION_PATH\scripts\Windows.ps1
+      run: '& $env:GITHUB_ACTION_PATH\scripts\Windows.ps1'
       
     - name: Download Rclone for macOS
       if: runner.os == 'macOS'
