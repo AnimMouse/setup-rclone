@@ -49,6 +49,6 @@ runs:
       env:
         rclone_config: ${{ inputs.rclone_config }}
       run: |
-        New-Item $env:APPDATA\rclone\
+        New-Item "$env:APPDATA\rclone\"
         $rclone_config = [Convert]::FromBase64String($env:rclone_config)
-        [IO.File]::WriteAllBytes($env:APPDATA\rclone\rclone.conf, $rclone_config)
+        [IO.File]::WriteAllBytes("$env:APPDATA\rclone\rclone.conf", $rclone_config)
