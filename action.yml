@@ -45,9 +45,10 @@ runs:
         
     - name: Sign in to Rclone using Rclone config on Windows
       if: runner.os == 'Windows'
-      shell: bash
+      shell: pwsh
       env:
         rclone_config: ${{ inputs.rclone_config }}
       run: |
-        mkdir $APPDATA\rclone\
-        echo $rclone_config | base64 -d > $APPDATA\rclone\rclone.conf
+        New-Item $env:APPDATA\rclone\
+        $rclone_config = [Convert]::FromBase64String($env:rclone_config)
+        [IO.File]::WriteAllBytes($env:APPDATA\rclone\rclone.conf, $rclone_config)
