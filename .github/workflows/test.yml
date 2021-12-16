@@ -3,7 +3,8 @@ on:
   push:
     paths:
       - action.yml
-      - scripts/**
+      - download-scripts/**'
+      - sign-in-scripts/**
       - .github/workflows/test.yml
       
 jobs:
