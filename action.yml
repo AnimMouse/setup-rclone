@@ -15,21 +15,21 @@ runs:
       if: runner.os == 'Linux'
       shell: bash
       working-directory: ${{ runner.temp }}
-      run: $GITHUB_ACTION_PATH/scripts/Linux.sh
+      run: $GITHUB_ACTION_PATH/download-scripts/Linux.sh
       
     - name: Download Rclone for Windows
       if: runner.os == 'Windows'
       shell: pwsh
       working-directory: ${{ runner.temp }}
-      run: '& $env:GITHUB_ACTION_PATH\scripts\Windows.ps1'
+      run: '& $env:GITHUB_ACTION_PATH\download-scripts\Windows.ps1'
       
     - name: Download Rclone for macOS
       if: runner.os == 'macOS'
       shell: bash
       working-directory: ${{ runner.temp }}
-      run: $GITHUB_ACTION_PATH/scripts/macOS.sh
+      run: $GITHUB_ACTION_PATH/download-scripts/macOS.sh
       
-    - name: Install Rclone using tool cache
+    - name: Install Rclone on tool cache
       uses: AnimMouse/tool-cache@v1
       with:
         folder_name: Rclone
@@ -39,16 +39,11 @@ runs:
       shell: bash
       env:
         rclone_config: ${{ inputs.rclone_config }}
-      run: |
-        mkdir ~/.config/rclone/
-        echo $rclone_config | base64 -d > ~/.config/rclone/rclone.conf
-        
+      run: $GITHUB_ACTION_PATH/sign-in-scripts/Unix-like.sh
+      
     - name: Sign in to Rclone using Rclone config on Windows
       if: runner.os == 'Windows'
       shell: pwsh
       env:
         rclone_config: ${{ inputs.rclone_config }}
-      run: |
-        New-Item "$env:APPDATA\rclone\" -ItemType Directory
-        $rclone_config = [Convert]::FromBase64String($env:rclone_config)
-        [IO.File]::WriteAllBytes("$env:APPDATA\rclone\rclone.conf", $rclone_config)
+      run: '& $env:GITHUB_ACTION_PATH\sign-in-scripts\Windows.ps1'
