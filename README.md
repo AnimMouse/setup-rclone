@@ -15,7 +15,7 @@ Always use single quotes when running `rclone` to prevent the YAML parser from t
 ```yml
 steps:
   - name: Setup Rclone
-    uses: AnimMouse/setup-rclone@v1
+    uses: AnimMouse/setup-rclone@v2
     with:
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
       
