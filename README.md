@@ -12,10 +12,10 @@ Encode the rclone.conf file in base64 using this command `base64 -w 0 rclone.con
 
 Always use single quotes when running `rclone` to prevent the YAML parser from the ambiguity of colon.
 
-```yml
+```yaml
 steps:
   - name: Setup Rclone
-    uses: AnimMouse/setup-rclone@v2
+    uses: AnimMouse/setup-rclone@v1
     with:
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
       
