@@ -2,10 +2,9 @@ name: Test setup-rclone
 on:
   push:
     paths:
-      - action.yml
-      - download-scripts/**'
-      - sign-in-scripts/**
-      - .github/workflows/test.yml
+      - action.yaml
+      - scripts/**
+      - .github/workflows/test.yaml
       
 jobs:
   test:
