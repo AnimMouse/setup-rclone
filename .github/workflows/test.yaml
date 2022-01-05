@@ -2,7 +2,7 @@ name: Test setup-rclone
 on:
   push:
     paths:
-      - action.yaml
+      - action.yml
       - scripts/**
       - .github/workflows/test.yaml
       
