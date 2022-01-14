@@ -10,7 +10,43 @@ To use `rclone`, run this action before `rclone`.
 
 Encode the rclone.conf file in base64 using this command `base64 -w 0 rclone.conf` and paste it to `RCLONE_CONFIG` secret.
 
-Always use single quotes when running `rclone` to prevent the YAML parser from the ambiguity of colon.
+### Single command
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    with:
+      rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      
+  - run: rclone copy source:sourcepath dest:destpath
+```
+For bare remote with exposed colon, use single quotes to prevent the YAML parser from the ambiguity of colon.
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    with:
+      rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      
+  - run: 'rclone copy source: dest:'
+```
+
+### Multiple commands
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    with:
+      rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      
+  - run: |
+      rclone copy source:sourcepath dest:destpath
+      rclone copy source: dest:
+```
+For bare remote with exposed colon, no need to use single quotes.
+
+### Encrypted rclone config
+Paste your Rclone config pass to `RCLONE_CONFIG_PASS` secret.
 
 ```yaml
 steps:
@@ -19,10 +55,12 @@ steps:
     with:
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
       
-  - run: 'rclone ls copy source:sourcepath dest:destpath'
+  - env:
+      RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
+    run: 'rclone copy source1:sourcepath1 dest1:destpath1'
 ```
 
-### Similar actions
+#### Similar actions
 1. [NiceLabs/rclone-action](https://github.com/NiceLabs/rclone-action)
 2. [wei/rclone](https://github.com/wei/rclone)
 3. [andreiio/rclone-action](https://github.com/andreiio/rclone-action)
