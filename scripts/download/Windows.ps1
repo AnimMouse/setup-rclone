@@ -1,3 +1,4 @@
+$ErrorActionPreference = 'Stop'
 $version = (Invoke-RestMethod https://api.github.com/repos/rclone/rclone/releases/latest).tag_name
 Write-Host ::group::Downloading Rclone $version for Windows
 aria2c -x 16 https://github.com/rclone/rclone/releases/download/$version/rclone-$version-windows-amd64.zip
