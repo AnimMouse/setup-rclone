@@ -25,3 +25,6 @@ jobs:
         
       - name: Test Rclone by listing test remote
         run: 'rclone ls setup-gdrive-test:'
+        
+      - name: Test Rclone by checking version
+        run: rclone version

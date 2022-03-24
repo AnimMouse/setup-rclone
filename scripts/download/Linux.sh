@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -euo pipefail
 version=$(curl -s https://api.github.com/repos/rclone/rclone/releases/latest | jq -r '.tag_name')
 echo ::group::Downloading Rclone $version for Linux

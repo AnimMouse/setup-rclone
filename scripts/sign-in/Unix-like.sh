@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -euo pipefail
 echo ::group::Signing in to Rclone using Rclone config
 mkdir ~/.config/rclone/
