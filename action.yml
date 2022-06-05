@@ -35,15 +35,15 @@ runs:
         folder_name: Rclone
         
     - name: Sign in to Rclone using Rclone config on Unix-like
-      if: runner.os == 'Linux' || runner.os == 'macOS'
+      if: (runner.os == 'Linux' || runner.os == 'macOS') && inputs.rclone_config != 'false'
       shell: bash
-      env:
-        rclone_config: ${{ inputs.rclone_config }}
       run: $GITHUB_ACTION_PATH/scripts/sign-in/Unix-like.sh
-      
-    - name: Sign in to Rclone using Rclone config on Windows
-      if: runner.os == 'Windows'
-      shell: pwsh
       env:
         rclone_config: ${{ inputs.rclone_config }}
+        
+    - name: Sign in to Rclone using Rclone config on Windows
+      if: runner.os == 'Windows' && inputs.rclone_config != 'false'
+      shell: pwsh
       run: '& $env:GITHUB_ACTION_PATH\scripts\sign-in\Windows.ps1'
+      env:
+        rclone_config: ${{ inputs.rclone_config }}
