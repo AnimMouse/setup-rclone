@@ -56,7 +56,7 @@ steps:
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
       
   - run: rclone copy source1:sourcepath1 dest1:destpath1
-	env:
+    env:
       RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
 ```
 
@@ -71,7 +71,7 @@ steps:
   - run: 'rclone lsd --http-url https://beta.rclone.org :http:'
     
   - run: 'rclone lsd :http:'
-	env:
+    env:
       RCLONE_HTTP_URL: https://beta.rclone.org
 ```
 
