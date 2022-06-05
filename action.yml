@@ -6,7 +6,7 @@ branding:
 inputs:
   rclone_config:
     description: Rclone config file encoded in base64
-    required: true
+    default: false
     
 runs:
   using: composite

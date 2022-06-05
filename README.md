@@ -55,9 +55,24 @@ steps:
     with:
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
       
-  - env:
+  - run: rclone copy source1:sourcepath1 dest1:destpath1
+	env:
       RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
-    run: 'rclone copy source1:sourcepath1 dest1:destpath1'
+```
+
+### Config-less operation
+You can use Rclone without a config file by using command line options or environment variables.
+
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    
+  - run: 'rclone lsd --http-url https://beta.rclone.org :http:'
+    
+  - run: 'rclone lsd :http:'
+	env:
+      RCLONE_HTTP_URL: https://beta.rclone.org
 ```
 
 #### Similar actions
