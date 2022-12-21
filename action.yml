@@ -7,6 +7,9 @@ inputs:
   rclone_config:
     description: Rclone config file encoded in base64
     default: false
+  token:
+    description: GitHub token to avoid API rate limiting
+    default: ${{ github.token }}
     
 runs:
   using: composite
@@ -16,19 +19,25 @@ runs:
       shell: bash
       working-directory: ${{ runner.temp }}
       run: $GITHUB_ACTION_PATH/scripts/download/Linux.sh
-      
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        
     - name: Download Rclone for Windows
       if: runner.os == 'Windows'
       shell: pwsh
       working-directory: ${{ runner.temp }}
       run: '& $env:GITHUB_ACTION_PATH\scripts\download\Windows.ps1'
-      
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        
     - name: Download Rclone for macOS
       if: runner.os == 'macOS'
       shell: bash
       working-directory: ${{ runner.temp }}
       run: $GITHUB_ACTION_PATH/scripts/download/macOS.sh
-      
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        
     - name: Install Rclone on tool cache
       uses: AnimMouse/tool-cache@v1
       with:
