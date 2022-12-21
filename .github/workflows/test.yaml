@@ -1,7 +1,7 @@
 # This is a test workflow used for testing AnimMouse/setup-rclone action if it works or not.
 # This is not an example workflow that you will use to use setup-rclone.
 # If you forked this repository in order to use setup-rclone, you are doing it wrong. You need to create your own repository and use it there.
-# You are only going to use this if you help to develop, and test this action.
+# You are only going to use this if you help to develop, or create your own version of this action.
 
 name: Test setup-rclone
 on:
@@ -29,7 +29,7 @@ jobs:
         run: rclone listremotes
         
       - name: Test Rclone by listing test remote
-        run: 'rclone ls rclone-test-remote:'
+        run: 'rclone lsd rclone-test-remote:'
         
       - name: Test Rclone by checking version
         run: rclone version

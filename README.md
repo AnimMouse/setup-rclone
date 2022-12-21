@@ -20,7 +20,7 @@ steps:
       
   - run: rclone copy source:sourcepath dest:destpath
 ```
-For bare remote with exposed colon, use single quotes to prevent the YAML parser from the ambiguity of colon.
+For bare remote with exposed colon, use single quotes to prevent the YAML parser from the ambiguity of colon. (Nested mappings are not allowed in compact mappings.)
 ```yaml
 steps:
   - name: Setup Rclone
@@ -73,6 +73,18 @@ steps:
   - run: 'rclone lsd :http:'
     env:
       RCLONE_HTTP_URL: https://beta.rclone.org
+```
+
+### GitHub Token
+This action automatically uses a GitHub token in order to authenticate with GitHub API and avoid rate limiting. You can also specify your own fine-grained personal access token.
+
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    with:
+      rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      token: ${{ secrets.GH_PAT }}
 ```
 
 #### Similar actions
