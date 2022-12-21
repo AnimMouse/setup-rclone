@@ -1,3 +1,8 @@
+# This is a test workflow used for testing AnimMouse/setup-rclone action if it works or not.
+# This is not an example workflow that you will use to use setup-rclone.
+# If you forked this repository in order to use setup-rclone, you are doing it wrong. You need to create your own repository and use it there.
+# You are only going to use this if you help to develop, and test this action.
+
 name: Test setup-rclone
 on:
   push:
@@ -7,7 +12,7 @@ on:
       - .github/workflows/test.yaml
       
 jobs:
-  test:
+  test-with-config:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -18,13 +23,30 @@ jobs:
       - name: Setup Rclone using setup-rclone
         uses: AnimMouse/setup-rclone@main
         with:
-          rclone_config: ${{ secrets.RCLONE_CONFIG }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG }} # Refer to setup-rclone wiki in order to pass this test
           
       - name: Test Rclone by listing remotes
         run: rclone listremotes
         
       - name: Test Rclone by listing test remote
-        run: 'rclone ls setup-gdrive-test:'
+        run: 'rclone ls rclone-test-remote:'
+        
+      - name: Test Rclone by checking version
+        run: rclone version
+        
+  test-config-less:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        
+    steps:
+      - name: Setup Rclone using setup-rclone
+        uses: AnimMouse/setup-rclone@main
+        
+      - name: Test Rclone by listing config-less test remote
+        run: 'rclone lsd --http-url https://beta.rclone.org/test/ :http:'
         
       - name: Test Rclone by checking version
         run: rclone version
