@@ -55,7 +55,7 @@ steps:
     with:
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
       
-  - run: rclone copy source1:sourcepath1 dest1:destpath1
+  - run: rclone copy source:sourcepath dest:destpath
     env:
       RCLONE_CONFIG_PASS: ${{ secrets.RCLONE_CONFIG_PASS }}
 ```
@@ -75,8 +75,20 @@ steps:
       RCLONE_HTTP_URL: https://beta.rclone.org
 ```
 
+### Specific version
+You can specify the version you want. By default, this action downloads the latest version.
+
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    with:
+      rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      version: v1.61.0
+```
+
 ### GitHub Token
-This action automatically uses a GitHub token in order to authenticate with GitHub API and avoid rate limiting. You can also specify your own fine-grained personal access token.
+This action automatically uses a GitHub token in order to authenticate with GitHub API and avoid rate limiting. You can also specify your own read-only fine-grained personal access token.
 
 ```yaml
 steps:
