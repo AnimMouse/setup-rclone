@@ -18,12 +18,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        version: [latest, v1.61.0]
         
     steps:
       - name: Setup Rclone using setup-rclone
         uses: AnimMouse/setup-rclone@main
         with:
           rclone_config: ${{ secrets.RCLONE_CONFIG }} # Refer to setup-rclone wiki in order to pass this test
+          version: ${{ matrix.version }}
           
       - name: Test Rclone by listing remotes
         run: rclone listremotes
@@ -40,11 +42,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        version: [latest, v1.61.0]
         
     steps:
       - name: Setup Rclone using setup-rclone
         uses: AnimMouse/setup-rclone@main
-        
+        with:
+          version: ${{ matrix.version }}
+          
       - name: Test Rclone by listing config-less test remote
         run: 'rclone lsd --http-url https://beta.rclone.org/test/ :http:'
         
