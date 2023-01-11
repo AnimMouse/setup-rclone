@@ -8,7 +8,7 @@ This action is implemented as a [composite](https://docs.github.com/en/actions/c
 ## Usage
 To use `rclone`, run this action before `rclone`.
 
-Encode the rclone.conf file in base64 using this command `base64 -w 0 rclone.conf` and paste it to `RCLONE_CONFIG` secret.
+Encode the rclone.conf file in Base64 using this command `base64 -w 0 rclone.conf` and paste it to `RCLONE_CONFIG` secret.
 
 ### Single command
 ```yaml
@@ -87,7 +87,7 @@ steps:
       version: v1.61.0
 ```
 
-### GitHub Token
+### GitHub token
 This action automatically uses a GitHub token in order to authenticate with GitHub API and avoid rate limiting. You can also specify your own read-only fine-grained personal access token.
 
 ```yaml
