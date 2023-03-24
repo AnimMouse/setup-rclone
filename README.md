@@ -76,7 +76,7 @@ steps:
 ```
 
 ### Plain text Rclone config
-You can disable Base64 so that you can input config file in plain text. This will allow you to place config file directly on YAML or get the config file from outputs.
+You can disable Base64 so that you can input config file in plain text. This allows you to place the config file directly on YAML or get the config file from outputs.
 
 ```yaml
 steps:
