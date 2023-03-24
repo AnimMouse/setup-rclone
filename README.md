@@ -20,7 +20,7 @@ steps:
       
   - run: rclone copy source:sourcepath dest:destpath
 ```
-For bare remote with exposed colon, use single quotes to prevent the YAML parser from the ambiguity of colon. (Nested mappings are not allowed in compact mappings.)
+For bare remote, use single quotes to stop YAML parser from interpreting the remote as a key-value pair.
 ```yaml
 steps:
   - name: Setup Rclone
@@ -43,9 +43,9 @@ steps:
       rclone copy source:sourcepath dest:destpath
       rclone copy source: dest:
 ```
-For bare remote with exposed colon, no need to use single quotes.
+For bare remote in pipes, no need to use single quotes as YAML parser does not interpret the remote as a key-value pair.
 
-### Encrypted rclone config
+### Encrypted Rclone config
 Paste your Rclone config pass to `RCLONE_CONFIG_PASS` secret.
 
 ```yaml
@@ -75,8 +75,25 @@ steps:
       RCLONE_HTTP_URL: https://beta.rclone.org
 ```
 
+### Plain text Rclone config
+You can disable Base64 so that you can input config file in plain text. This will allow you to place config file directly on YAML or get the config file from outputs.
+
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    with:
+      rclone_config: |
+        [rclone-test-remote]
+        type = http
+        url = https://beta.rclone.org/test/
+      disable_base64: true
+      
+  - run: 'rclone lsd rclone-test-remote:'
+```
+
 ### Specific version
-You can specify the version you want. By default, this action downloads the latest version.
+You can specify the version you want. By default, this action downloads the latest version if version is not specified.
 
 ```yaml
 steps:

@@ -10,6 +10,11 @@ on:
       - action.yml
       - scripts/**
       - .github/workflows/test.yaml
+  pull_request:
+    paths:
+      - action.yml
+      - scripts/**
+      - .github/workflows/test.yaml
       
 jobs:
   test-with-config:
@@ -30,6 +35,31 @@ jobs:
       - name: Test Rclone by listing remotes
         run: rclone listremotes
         
+      - name: Test Rclone by listing test remote
+        run: 'rclone lsd rclone-test-remote:'
+        
+      - name: Test Rclone by checking version
+        run: rclone version
+        
+  test-with-config-plain-text:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        version: [latest, v1.61.0]
+        
+    steps:
+      - name: Setup Rclone using setup-rclone
+        uses: AnimMouse/setup-rclone@main
+        with:
+          rclone_config: |
+            [rclone-test-remote]
+            type = http
+            url = https://beta.rclone.org/test/
+          disable_base64: true
+          version: ${{ matrix.version }}
+          
       - name: Test Rclone by listing test remote
         run: 'rclone lsd rclone-test-remote:'
         

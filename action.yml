@@ -5,7 +5,10 @@ branding:
   color: blue
 inputs:
   rclone_config:
-    description: Rclone config file encoded in base64
+    description: Rclone config file encoded in Base64
+    default: false
+  disable_base64:
+    description: Disable Base64 on config file
     default: false
   version:
     description: Rclone version
@@ -62,6 +65,7 @@ runs:
       run: $GITHUB_ACTION_PATH/scripts/sign-in/Unix-like.sh
       env:
         rclone_config: ${{ inputs.rclone_config }}
+        disable_base64: ${{ inputs.disable_base64 }}
         
     - name: Sign in to Rclone using Rclone config on Windows
       if: runner.os == 'Windows' && inputs.rclone_config != 'false'
@@ -69,3 +73,4 @@ runs:
       run: '& $env:GITHUB_ACTION_PATH\scripts\sign-in\Windows.ps1'
       env:
         rclone_config: ${{ inputs.rclone_config }}
+        disable_base64: ${{ inputs.disable_base64 }}
