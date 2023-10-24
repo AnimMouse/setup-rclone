@@ -23,7 +23,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        version: [latest, v1.61.0]
+        version: [latest, "${{ vars.SPECIFIED_VERSION }}"] # Set the SPECIFIED_VERSION variable to the latest version in order to pass this test
         
     steps:
       - name: Setup Rclone using setup-rclone
@@ -47,7 +47,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        version: [latest, v1.61.0]
+        version: [latest, "${{ vars.SPECIFIED_VERSION }}"]
         
     steps:
       - name: Setup Rclone using setup-rclone
@@ -72,7 +72,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        version: [latest, v1.61.0]
+        version: [latest, "${{ vars.SPECIFIED_VERSION }}"]
         
     steps:
       - name: Setup Rclone using setup-rclone
