@@ -92,6 +92,27 @@ steps:
   - run: 'rclone lsd rclone-test-remote:'
 ```
 
+### Update token
+Some tokens in Rclone config has expiry, which means it has to be refreshed, or else it will expire and it will not work anymore. To prevent expiration, Rclone automatically refresh the tokens as needed. To update those tokens in GitHub secrets, use the `AnimMouse/setup-rclone/update-config@v1` action to update the Rclone config.
+
+This requires a fine-grained personal access token that has read and write access to secrets scope in the current repository to update the secret as the default `GITHUB_TOKEN` does not have access to secrets scope.
+
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    with:
+      rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      
+  - run: rclone copy source:sourcepath dest:destpath
+    
+  - name: Update Rclone config
+    uses: AnimMouse/setup-rclone/update-config@v1
+    with:
+      rclone_config_name: RCLONE_CONFIG
+      token: ${{ secrets.GH_PAT }}
+```
+
 ### Specific version
 You can specify the version you want. By default, this action downloads the latest version if version is not specified.
 
