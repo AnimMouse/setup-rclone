@@ -39,14 +39,14 @@ runs:
         GITHUB_TOKEN: ${{ inputs.token }}
         
     - name: Restore Rclone cache
-      id: restore-cache
+      id: cache
       uses: actions/cache/restore@v3
       with:
         path: ${{ runner.tool_cache }}/Rclone
         key: Rclone-${{ steps.version-unix-like.outputs.version || steps.version-windows.outputs.version }}-${{ runner.os }}
         
     - name: Download Rclone for Unix-like
-      if: (runner.os == 'Linux' || runner.os == 'macOS') && ! steps.restore-cache.outputs.cache-hit
+      if: (runner.os == 'Linux' || runner.os == 'macOS') && ! steps.cache.outputs.cache-hit
       shell: bash
       working-directory: ${{ runner.temp }}
       run: $GITHUB_ACTION_PATH/scripts/download/Unix-like.sh
@@ -54,7 +54,7 @@ runs:
         version: ${{ steps.version-unix-like.outputs.version }}
         
     - name: Download Rclone for Windows
-      if: runner.os == 'Windows' && ! steps.restore-cache.outputs.cache-hit
+      if: runner.os == 'Windows' && ! steps.cache.outputs.cache-hit
       shell: pwsh
       working-directory: ${{ runner.temp }}
       run: '& $env:GITHUB_ACTION_PATH\scripts\download\Windows.ps1'
@@ -65,7 +65,7 @@ runs:
       uses: AnimMouse/tool-cache@v1
       with:
         folder_name: Rclone
-        cache_hit: ${{ steps.restore-cache.outputs.cache-hit }}
+        cache_hit: ${{ steps.cache.outputs.cache-hit }}
         
     - name: Sign in to Rclone using Rclone config on Unix-like
       if: (runner.os == 'Linux' || runner.os == 'macOS') && inputs.rclone_config != 'false'
@@ -84,7 +84,7 @@ runs:
         disable_base64: ${{ inputs.disable_base64 }}
         
     - name: Save Rclone cache
-      if: '! steps.restore-cache.outputs.cache-hit'
+      if: '! steps.cache.outputs.cache-hit'
       uses: actions/cache/save@v3
       with:
         path: ${{ runner.tool_cache }}/Rclone
