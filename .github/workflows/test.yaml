@@ -104,6 +104,7 @@ jobs:
           
       - name: Generate new secret value
         run: |
+          mkdir -p ~/.config/rclone
           rclone_config_update_test=$RANDOM
           echo $rclone_config_update_test | tee ~/.config/rclone/rclone.conf
           
@@ -128,6 +129,7 @@ jobs:
           
       - name: Generate new secret value
         run: |
+          New-Item $env:APPDATA\rclone -ItemType Directory
           $rclone_config_update_test = Get-Random
           $rclone_config_update_test
           [IO.File]::WriteAllBytes("$env:APPDATA\rclone\rclone.conf", [Text.Encoding]::UTF8.GetBytes($rclone_config_update_test))
