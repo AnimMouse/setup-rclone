@@ -8,8 +8,8 @@ inputs:
     description: Rclone config secret name on GitHub
     required: true
   token:
-    description: GitHub token to update secret
-    default: ${{ github.token }}
+    description: GitHub personal access token that has read and write access to secrets scope to update secret
+    required: true
     
 runs:
   using: composite
