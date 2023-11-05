@@ -1,0 +1,33 @@
+name: Update Rclone config
+description: Update Rclone config for setup-rclone
+branding:
+  icon: cloud
+  color: blue
+inputs:
+  rclone_config_name:
+    description: Rclone config secret name on GitHub
+    required: true
+  token:
+    description: GitHub token to update secret
+    default: ${{ github.token }}
+    
+runs:
+  using: composite
+  steps:
+    - name: Update Rclone config for Unix-like
+      if: runner.os == 'Linux' || runner.os == 'macOS'
+      shell: bash
+      run: base64 -w 0 ~/.config/rclone/rclone.conf | gh secret set "$rclone_config_name"
+      env:
+        rclone_config_name: ${{ inputs.rclone_config_name }}
+        GITHUB_TOKEN: ${{ inputs.token }}
+        GH_REPO: ${{ github.repository }}
+        
+    - name: Update Rclone config for Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: '[Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:APPDATA\rclone\rclone.conf")) | gh secret set "$env:rclone_config_name"'
+      env:
+        rclone_config_name: ${{ inputs.rclone_config_name }}
+        GITHUB_TOKEN: ${{ inputs.token }}
+        GH_REPO: ${{ github.repository }}
