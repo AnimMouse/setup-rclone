@@ -10,61 +10,65 @@ on:
       - .github/workflows/test-update-config.yaml
       
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      max-parallel: 1
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        
+  test-ubuntu:
+    runs-on: ubuntu-latest
     steps:
       - name: Get past secret value
-        run: echo $rclone_config_update_test | base64 -d
+        run: echo $rclone_config | base64 -d
         env:
-          rclone_config_update_test: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST_UBUNTU }}
           
       - name: Generate new secret value
         run: |
           mkdir -p ~/.config/rclone
-          rclone_config_update_test=$RANDOM
-          echo $rclone_config_update_test
-          echo $rclone_config_update_test > ~/.config/rclone/rclone.conf
+          rclone_config=$RANDOM
+          echo $rclone_config
+          echo $rclone_config > ~/.config/rclone/rclone.conf
           
       - name: Update Rclone config using setup-rclone/update-config
         uses: AnimMouse/setup-rclone/update-config@main
         with:
-          rclone_config_name: RCLONE_CONFIG_UPDATE_TEST
+          rclone_config_name: RCLONE_CONFIG_UPDATE_TEST_UBUNTU
           token: ${{ secrets.GH_PAT }}
           
-      - name: Get new secret value
-        run: echo $rclone_config_update_test | base64 -d
+  test-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Get past secret value
+        run: echo $rclone_config | base64 -d
         env:
-          rclone_config_update_test: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST_MACOS }}
+          
+      - name: Generate new secret value
+        run: |
+          mkdir -p ~/.config/rclone
+          rclone_config=$RANDOM
+          echo $rclone_config
+          echo $rclone_config > ~/.config/rclone/rclone.conf
+          
+      - name: Update Rclone config using setup-rclone/update-config
+        uses: AnimMouse/setup-rclone/update-config@main
+        with:
+          rclone_config_name: RCLONE_CONFIG_UPDATE_TEST_MACOS
+          token: ${{ secrets.GH_PAT }}
           
   test-windows:
-    needs: test
     runs-on: windows-latest
     steps:
       - name: Get past secret value
-        run: '[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($env:rclone_config_update_test))'
+        run: '[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($env:rclone_config))'
         env:
-          rclone_config_update_test: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST }}
+          rclone_config: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST_WINDOWS }}
           
       - name: Generate new secret value
         run: |
           New-Item $env:APPDATA\rclone -ItemType Directory
-          $rclone_config_update_test = Get-Random
-          $rclone_config_update_test
-          [IO.File]::WriteAllBytes("$env:APPDATA\rclone\rclone.conf", [Text.Encoding]::UTF8.GetBytes($rclone_config_update_test))
+          $rclone_config = Get-Random
+          $rclone_config
+          [IO.File]::WriteAllBytes("$env:APPDATA\rclone\rclone.conf", [Text.Encoding]::UTF8.GetBytes($rclone_config))
           
       - name: Update Rclone config using setup-rclone/update-config
         uses: AnimMouse/setup-rclone/update-config@main
         with:
-          rclone_config_name: RCLONE_CONFIG_UPDATE_TEST
+          rclone_config_name: RCLONE_CONFIG_UPDATE_TEST_WINDOWS
           token: ${{ secrets.GH_PAT }}
-          
-      - name: Get new secret value
-        run: '[Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($env:rclone_config_update_test))'
-        env:
-          rclone_config_update_test: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST }}
