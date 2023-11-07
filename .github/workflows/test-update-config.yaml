@@ -18,17 +18,10 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         
     steps:
-      - name: Get past secret value (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Get past secret value
         run: echo $rclone_config | base64 -d
         env:
-          rclone_config: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST_UBUNTU }}
-          
-      - name: Get past secret value (macOS)
-        if: matrix.os == 'macos-latest'
-        run: echo $rclone_config | base64 -d
-        env:
-          rclone_config: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST_MACOS }}
+          rclone_config: ${{ matrix.os == 'macos-latest' && secrets.RCLONE_CONFIG_UPDATE_TEST_MACOS || secrets.RCLONE_CONFIG_UPDATE_TEST_UBUNTU }}
           
       - name: Generate new secret value
         run: |
@@ -37,18 +30,10 @@ jobs:
           echo $rclone_config
           echo $rclone_config > ~/.config/rclone/rclone.conf
           
-      - name: Update Rclone config using setup-rclone/update-config (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+      - name: Update Rclone config using setup-rclone/update-config
         uses: AnimMouse/setup-rclone/update-config@main
         with:
-          rclone_config_name: RCLONE_CONFIG_UPDATE_TEST_UBUNTU
-          token: ${{ secrets.GH_PAT }}
-          
-      - name: Update Rclone config using setup-rclone/update-config (macOS)
-        if: matrix.os == 'macos-latest'
-        uses: AnimMouse/setup-rclone/update-config@main
-        with:
-          rclone_config_name: RCLONE_CONFIG_UPDATE_TEST_MACOS
+          rclone_config_name: ${{ matrix.os == 'macos-latest' && 'RCLONE_CONFIG_UPDATE_TEST_MACOS' || 'RCLONE_CONFIG_UPDATE_TEST_UBUNTU' }}
           token: ${{ secrets.GH_PAT }}
           
   test-windows:
