@@ -109,7 +109,7 @@ steps:
   - name: Update Rclone config
     uses: AnimMouse/setup-rclone/update-config@v1
     with:
-      rclone_config_name: RCLONE_CONFIG
+      rclone_config_secret_name: RCLONE_CONFIG
       token: ${{ secrets.GH_PAT }}
 ```
 
@@ -122,7 +122,7 @@ steps:
     uses: AnimMouse/setup-rclone@v1
     with:
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
-      version: v1.61.0
+      version: v1.64.0
 ```
 
 ### GitHub token
