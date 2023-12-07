@@ -4,10 +4,6 @@ on:
     paths:
       - update-config/action.yaml
       - .github/workflows/test-update-config.yaml
-  pull_request:
-    paths:
-      - update-config/action.yaml
-      - .github/workflows/test-update-config.yaml
       
 jobs:
   test-unix-like:
@@ -23,17 +19,16 @@ jobs:
         env:
           rclone_config: ${{ matrix.os == 'macos-latest' && secrets.RCLONE_CONFIG_UPDATE_TEST_MACOS || secrets.RCLONE_CONFIG_UPDATE_TEST_UBUNTU }}
           
-      - name: Generate new secret value
+      - name: Get new secret value
         run: |
-          mkdir -p ~/.config/rclone
-          rclone_config=$RANDOM
-          echo $rclone_config
-          echo $rclone_config > ~/.config/rclone/rclone.conf
+          mkdir ~/.config/rclone
+          rclone_config=${{ github.run_id }}
+          echo $rclone_config | tee ~/.config/rclone/rclone.conf
           
       - name: Update Rclone config using setup-rclone/update-config
         uses: AnimMouse/setup-rclone/update-config@main
         with:
-          rclone_config_name: ${{ matrix.os == 'macos-latest' && 'RCLONE_CONFIG_UPDATE_TEST_MACOS' || 'RCLONE_CONFIG_UPDATE_TEST_UBUNTU' }}
+          rclone_config_secret_name: ${{ matrix.os == 'macos-latest' && 'RCLONE_CONFIG_UPDATE_TEST_MACOS' || 'RCLONE_CONFIG_UPDATE_TEST_UBUNTU' }}
           token: ${{ secrets.GH_PAT }}
           
   test-windows:
@@ -44,15 +39,15 @@ jobs:
         env:
           rclone_config: ${{ secrets.RCLONE_CONFIG_UPDATE_TEST_WINDOWS }}
           
-      - name: Generate new secret value
+      - name: Get new secret value
         run: |
           New-Item $env:APPDATA\rclone -ItemType Directory
-          $rclone_config = Get-Random
+          $rclone_config = "${{ github.run_id }}"
           $rclone_config
           [IO.File]::WriteAllBytes("$env:APPDATA\rclone\rclone.conf", [Text.Encoding]::UTF8.GetBytes($rclone_config))
           
       - name: Update Rclone config using setup-rclone/update-config
         uses: AnimMouse/setup-rclone/update-config@main
         with:
-          rclone_config_name: RCLONE_CONFIG_UPDATE_TEST_WINDOWS
+          rclone_config_secret_name: RCLONE_CONFIG_UPDATE_TEST_WINDOWS
           token: ${{ secrets.GH_PAT }}
