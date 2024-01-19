@@ -7,9 +7,6 @@ inputs:
   rclone_config_secret_name:
     description: Rclone config secret name on GitHub
     required: true
-  repository:
-    description: GitHub repository to be used for updating secret
-    default: ${{ github.repository }}
   token:
     description: GitHub personal access token that has read and write access to secrets scope to update secret
     required: true
@@ -24,7 +21,7 @@ runs:
       env:
         rclone_config_secret_name: ${{ inputs.rclone_config_secret_name }}
         GITHUB_TOKEN: ${{ inputs.token }}
-        GH_REPO: ${{ inputs.repository }}
+        GH_REPO: ${{ github.repository }}
         
     - name: Update Rclone config for Windows
       if: runner.os == 'Windows'
@@ -33,4 +30,4 @@ runs:
       env:
         rclone_config_secret_name: ${{ inputs.rclone_config_secret_name }}
         GITHUB_TOKEN: ${{ inputs.token }}
-        GH_REPO: ${{ inputs.repository }}
+        GH_REPO: ${{ github.repository }}
