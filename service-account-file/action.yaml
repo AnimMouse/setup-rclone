@@ -17,7 +17,7 @@ runs:
     - name: Add service account file for Unix-like
       if: runner.os == 'Linux' || runner.os == 'macOS'
       shell: bash
-      run: echo "$service_account_file" > ~/.config/rclone/$service_account_filename
+      run: echo "$service_account_file" | base64 -d > ~/.config/rclone/$service_account_filename
       env:
         service_account_filename: ${{ inputs.service_account_filename }}
         service_account_file: ${{ inputs.service_account_file }}
