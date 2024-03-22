@@ -18,6 +18,7 @@ on:
       
 jobs:
   test-with-config:
+    if: github.event_name != 'pull_request'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -42,7 +43,6 @@ jobs:
         run: rclone version
         
   test-with-config-plain-text:
-    needs: test-with-config
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -68,7 +68,6 @@ jobs:
         run: rclone version
         
   test-config-less:
-    needs: test-with-config
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
