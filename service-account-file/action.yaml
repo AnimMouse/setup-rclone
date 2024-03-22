@@ -1,0 +1,33 @@
+name: Rclone service account file
+description: Add service account file for setup-rclone
+branding:
+  icon: cloud
+  color: blue
+inputs:
+  service_account_filename:
+    description: Service account filename
+    required: true
+  service_account_file:
+    description: Service account file encoded in Base64
+    required: true
+    
+runs:
+  using: composite
+  steps:
+    - name: Add service account file for Unix-like
+      if: runner.os == 'Linux' || runner.os == 'macOS'
+      shell: bash
+      run: echo "$service_account_file" > ~/.config/rclone/$service_account_filename
+      env:
+        service_account_filename: ${{ inputs.service_account_filename }}
+        service_account_file: ${{ inputs.service_account_file }}
+        
+    - name: Add service account file for Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $service_account_file = [Convert]::FromBase64String($env:service_account_file)
+        [IO.File]::WriteAllBytes("$env:APPDATA\rclone\$env:service_account_filename", $service_account_file)
+      env:
+        service_account_filename: ${{ inputs.service_account_filename }}
+        service_account_file: ${{ inputs.service_account_file }}
