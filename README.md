@@ -20,7 +20,7 @@ steps:
       
   - run: rclone copy source:sourcepath dest:destpath
 ```
-For bare remote, use single quotes to stop YAML parser from interpreting the remote as a key-value pair.
+For bare remote, use single quotes to stop the YAML parser from interpreting the remote as a key-value pair.
 ```yaml
 steps:
   - name: Setup Rclone
@@ -43,7 +43,7 @@ steps:
       rclone copy source:sourcepath dest:destpath
       rclone copy source: dest:
 ```
-For bare remote in pipes, no need to use single quotes as YAML parser does not interpret the remote as a key-value pair.
+For bare remote in pipes, there is no need to use single quotes as YAML parser does not interpret the remote as a key-value pair.
 
 ### Encrypted Rclone config
 Paste your Rclone config pass to `RCLONE_CONFIG_PASS` secret.
@@ -61,7 +61,7 @@ steps:
 ```
 
 ### Config-less operation
-You can use Rclone without a config file by using command line options or environment variables.
+You can use Rclone without a config file by using command-line options or environment variables.
 
 ```yaml
 steps:
@@ -76,7 +76,7 @@ steps:
 ```
 
 ### Plain text Rclone config
-You can disable Base64 so that you can input config file in plain text. This allows you to place the config file directly on YAML or get the config file from outputs.
+You can disable Base64 so that you can input the config file in plain text. This allows you to place the config file directly in YAML or get the config file from outputs.
 
 ```yaml
 steps:
@@ -92,10 +92,33 @@ steps:
   - run: 'rclone lsd rclone-test-remote:'
 ```
 
-### Update token
-Some tokens in Rclone config has expiry, which means it has to be refreshed, or else it will expire and it will not work anymore. To prevent expiration, Rclone automatically refresh the tokens as needed. To update those tokens in GitHub secrets, use the `AnimMouse/setup-rclone/update-config@v1` action to update the Rclone config.
+### Service account file
+To prevent the Rclone config file from becoming too large since you have a lot of remotes that uses the same service account file, use the `AnimMouse/setup-rclone/service-account-file@v1` action to add the service account file inside the Rclone config directory.
 
-This requires a fine-grained personal access token that has read and write access to secrets scope in the current repository to update the secret as the default `GITHUB_TOKEN` does not have access to secrets scope.
+Encode the service-account-file.json file in Base64 using this command `base64 -w 0 service-account-file.json` and paste it to `SERVICE_ACCOUNT_FILE` secret. And declare the service account file on the Rclone config like this `service_account_file = $RCLONE_CONFIG_DIR/service-account-file.json`.
+
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    with:
+      rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      
+  - name: Setup Rclone service account file
+    uses: AnimMouse/setup-rclone/service-account-file@v1
+    with:
+      service_account_filename: service-account-file.json
+      service_account_file: ${{ secrets.SERVICE_ACCOUNT_FILE }}
+      
+  - run: rclone copy source:sourcepath dest:destpath
+```
+
+You can also declare multiple service account files; just run the `AnimMouse/setup-rclone/service-account-file@v1` action multiple times, and use different service account filename and different secret name.
+
+### Update token
+Some tokens in Rclone config have expiration, which means they have to be refreshed, or else they will expire and it will not work anymore. To prevent expiration, Rclone automatically refreshes the tokens as needed. To update those tokens in GitHub secrets, use the `AnimMouse/setup-rclone/update-config@v1` action to update the Rclone config.
+
+This requires a fine-grained personal access token that has read and write access to the secrets scope in the current repository to update the secret as the default `GITHUB_TOKEN` does not have access to the secrets scope.
 
 ```yaml
 steps:
@@ -114,7 +137,7 @@ steps:
 ```
 
 ### Specific version
-You can specify the version you want. By default, this action downloads the latest version if version is not specified.
+You can specify the version you want. By default, this action downloads the latest version if the version is not specified.
 
 ```yaml
 steps:
@@ -126,7 +149,7 @@ steps:
 ```
 
 ### GitHub token
-This action automatically uses a GitHub token in order to authenticate with GitHub API and avoid rate limiting. You can also specify your own read-only fine-grained personal access token.
+This action automatically uses a GitHub token in order to authenticate with the GitHub API and avoid rate limiting. You can also specify your own read-only fine-grained personal access token.
 
 ```yaml
 steps:
