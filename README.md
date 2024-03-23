@@ -104,7 +104,7 @@ steps:
     with:
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
       
-  - name: Setup Rclone service account file
+  - name: Add Rclone service account file
     uses: AnimMouse/setup-rclone/service-account-file@v1
     with:
       service_account_filename: service-account-file.json
