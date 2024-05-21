@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-latest-large]
         version: [latest, "${{ vars.SPECIFIED_VERSION }}"] # Set the SPECIFIED_VERSION variable to the last previous version in order to pass this test
         
     steps:
@@ -47,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-latest-large]
         version: [latest, "${{ vars.SPECIFIED_VERSION }}"]
         
     steps:
@@ -72,7 +72,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-latest-large]
         version: [latest, "${{ vars.SPECIFIED_VERSION }}"]
         
     steps:
