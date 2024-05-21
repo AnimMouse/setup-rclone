@@ -43,7 +43,7 @@ runs:
       uses: actions/cache/restore@v4
       with:
         path: ${{ runner.tool_cache }}/Rclone
-        key: Rclone-${{ steps.version-unix-like.outputs.version || steps.version-windows.outputs.version }}-${{ runner.os }}
+        key: Rclone-${{ steps.version-unix-like.outputs.version || steps.version-windows.outputs.version }}-${{ runner.os }}-${{ runner.arch }}
         
     - name: Download Rclone for Unix-like
       if: (runner.os == 'Linux' || runner.os == 'macOS') && ! steps.cache.outputs.cache-hit
@@ -88,4 +88,4 @@ runs:
       uses: actions/cache/save@v4
       with:
         path: ${{ runner.tool_cache }}/Rclone
-        key: Rclone-${{ steps.version-unix-like.outputs.version || steps.version-windows.outputs.version }}-${{ runner.os }}
+        key: Rclone-${{ steps.version-unix-like.outputs.version || steps.version-windows.outputs.version }}-${{ runner.os }}-${{ runner.arch }}
