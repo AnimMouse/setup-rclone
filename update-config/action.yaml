@@ -17,7 +17,7 @@ runs:
     - name: Update Rclone config for Unix-like
       if: runner.os == 'Linux' || runner.os == 'macOS'
       shell: bash
-      run: base64 ~/.config/rclone/rclone.conf | gh secret set "$rclone_config_secret_name"
+      run: base64 < ~/.config/rclone/rclone.conf | gh secret set "$rclone_config_secret_name"
       env:
         rclone_config_secret_name: ${{ inputs.rclone_config_secret_name }}
         GITHUB_TOKEN: ${{ inputs.token }}
