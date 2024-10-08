@@ -84,7 +84,7 @@ runs:
         disable_base64: ${{ inputs.disable_base64 }}
         
     - name: Save Rclone cache
-      if: '(! steps.cache.outputs.cache-hit || steps.cache.outputs.cache-hit == ''false'')'
+      if: "! steps.cache.outputs.cache-hit || steps.cache.outputs.cache-hit == 'false'"
       uses: actions/cache/save@v4
       with:
         path: ${{ runner.tool_cache }}/Rclone
