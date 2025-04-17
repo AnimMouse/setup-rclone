@@ -61,18 +61,20 @@ steps:
 ```
 
 ### Config-less operation
-You can use Rclone without a config file by using command-line options or environment variables.
+You can use Rclone without a config file by using command-line options, environment variables, or connection strings.
 
 ```yaml
 steps:
   - name: Setup Rclone
     uses: AnimMouse/setup-rclone@v1
     
-  - run: 'rclone lsd --http-url https://beta.rclone.org :http:'
+  - run: 'rclone lsd --http-url https://pub.rclone.org :http:'
     
   - run: 'rclone lsd :http:'
     env:
-      RCLONE_HTTP_URL: https://beta.rclone.org
+      RCLONE_HTTP_URL: https://pub.rclone.org
+      
+  - run: 'rclone lsd ":http,url='https://pub.rclone.org':"'
 ```
 
 ### Plain text Rclone config
@@ -86,10 +88,26 @@ steps:
       rclone_config: |
         [rclone-test-remote]
         type = http
-        url = https://beta.rclone.org/test/
+        url = https://pub.rclone.org
       disable_base64: true
       
   - run: 'rclone lsd rclone-test-remote:'
+```
+
+### Compressed Rclone config
+GitHub Actions secrets are limited to 48 KB in size. If you have a large Rclone config file, you can compress it first using zstd.
+
+Compress and encode the rclone.conf file using this command `zstd -c rclone.conf | base64 -w 0` and paste it to `RCLONE_CONFIG` secret.
+
+```yaml
+steps:
+  - name: Setup Rclone
+    uses: AnimMouse/setup-rclone@v1
+    with:
+      rclone_config: ${{ secrets.RCLONE_CONFIG }}
+      zstd_config: true
+      
+  - run: rclone copy source:sourcepath dest:destpath
 ```
 
 ### Service account file
@@ -145,7 +163,7 @@ steps:
     uses: AnimMouse/setup-rclone@v1
     with:
       rclone_config: ${{ secrets.RCLONE_CONFIG }}
-      version: v1.64.0
+      version: v1.69.0
 ```
 
 ### GitHub token
