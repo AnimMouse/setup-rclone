@@ -7,6 +7,11 @@ if ($env:disable_base64 -eq 'true') {
 }
 else {
   $rclone_config = [Convert]::FromBase64String($env:rclone_config)
-  [IO.File]::WriteAllBytes("$env:APPDATA\rclone\rclone.conf", $rclone_config)
+  if ($env:zstd_config -eq 'true') {
+    $rclone_config | zstd -dqo "$env:APPDATA\rclone\rclone.conf"
+  }
+  else {
+    [IO.File]::WriteAllBytes("$env:APPDATA\rclone\rclone.conf", $rclone_config)
+  }
 }
 Write-Host ::endgroup::
