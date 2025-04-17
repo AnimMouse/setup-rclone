@@ -64,8 +64,28 @@ jobs:
       - name: Test Rclone by listing test remote
         run: 'rclone lsd rclone-test-remote:'
         
-      - name: Test Rclone by checking version
-        run: rclone version
+  test-with-config-zstd:
+    if: github.event_name != 'pull_request'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        version: [latest, "${{ vars.SPECIFIED_VERSION }}"]
+        
+    steps:
+      - name: Setup Rclone using setup-rclone
+        uses: AnimMouse/setup-rclone@main
+        with:
+          rclone_config: ${{ secrets.RCLONE_CONFIG_ZSTD }}
+          zstd_config: true
+          version: ${{ matrix.version }}
+          
+      - name: Test Rclone by listing remotes
+        run: rclone listremotes
+        
+      - name: Test Rclone by listing test remote
+        run: 'rclone lsd rclone-test-remote:'
         
   test-config-less:
     runs-on: ${{ matrix.os }}
@@ -83,6 +103,3 @@ jobs:
           
       - name: Test Rclone by listing config-less test remote
         run: 'rclone lsd --http-url https://beta.rclone.org/test/ :http:'
-        
-      - name: Test Rclone by checking version
-        run: rclone version
