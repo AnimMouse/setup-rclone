@@ -46,7 +46,7 @@ runs:
         key: Rclone-${{ steps.version-unix-like.outputs.version || steps.version-windows.outputs.version }}-${{ runner.os }}-${{ runner.arch }}
         
     - name: Download Rclone for Unix-like
-      if: (runner.os == 'Linux' || runner.os == 'macOS') && (! steps.cache.outputs.cache-hit || steps.cache.outputs.cache-hit == 'false')
+      if: (runner.os == 'Linux' || runner.os == 'macOS') && ! steps.cache.outputs.cache-hit
       shell: bash
       working-directory: ${{ runner.temp }}
       run: $GITHUB_ACTION_PATH/scripts/download/Unix-like.sh
@@ -54,7 +54,7 @@ runs:
         version: ${{ steps.version-unix-like.outputs.version }}
         
     - name: Download Rclone for Windows
-      if: runner.os == 'Windows' && (! steps.cache.outputs.cache-hit || steps.cache.outputs.cache-hit == 'false')
+      if: runner.os == 'Windows' && ! steps.cache.outputs.cache-hit
       shell: pwsh
       working-directory: ${{ runner.temp }}
       run: '& $env:GITHUB_ACTION_PATH\scripts\download\Windows.ps1'
@@ -84,7 +84,7 @@ runs:
         disable_base64: ${{ inputs.disable_base64 }}
         
     - name: Save Rclone cache
-      if: "! steps.cache.outputs.cache-hit || steps.cache.outputs.cache-hit == 'false'"
+      if: '! steps.cache.outputs.cache-hit'
       uses: actions/cache/save@v4
       with:
         path: ${{ runner.tool_cache }}/Rclone
