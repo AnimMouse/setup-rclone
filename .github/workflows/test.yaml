@@ -15,7 +15,10 @@ on:
       - action.yml
       - scripts/**
       - .github/workflows/test.yaml
-      
+  schedule:
+    - cron: '7 11 1 * *'
+  workflow_dispatch:
+  
 jobs:
   test-with-config:
     if: github.event_name != 'pull_request'

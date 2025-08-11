@@ -4,7 +4,10 @@ on:
     paths:
       - update-config/action.yaml
       - .github/workflows/test-update-config.yaml
-      
+  schedule:
+    - cron: '7 11 1 * *'
+  workflow_dispatch:
+  
 jobs:
   test-unix-like:
     runs-on: ${{ matrix.os }}
