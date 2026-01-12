@@ -1,6 +1,8 @@
 name: Test setup-rclone/update-config
 on:
   push:
+    branches:
+      - main
     paths:
       - update-config/action.yaml
       - .github/workflows/test-update-config.yaml

@@ -6,6 +6,8 @@
 name: Test setup-rclone
 on:
   push:
+    branches:
+      - main
     paths:
       - action.yaml
       - scripts/**
