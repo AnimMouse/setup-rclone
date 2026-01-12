@@ -24,8 +24,6 @@ jobs:
         version: [latest, specified]
         config: [secrets, config-less, plain-text, zstd]
         include:
-          - config: secrets
-            config-value: ${{ secrets.RCLONE_CONFIG }}
           - config: config-less
             config-value: ''
           - config: plain-text
@@ -33,9 +31,7 @@ jobs:
               [rclone-test-remote]
               type = http
               url = https://beta.rclone.org/test/
-          - config: zstd
-            config-value: ${{ secrets.RCLONE_CONFIG_ZSTD }}
-            
+              
     steps:
       - name: Get Rclone penultimate version on Unix-like
         id: penultimate-unix-like
@@ -54,10 +50,9 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           
       - name: Setup Rclone using setup-rclone
-        if: matrix.config != 'plain-text'
         uses: AnimMouse/setup-rclone@main
         with:
-          rclone_config: ${{ matrix.config-value }}
+          rclone_config: ${{ (matrix.config == 'secrets' && secrets.RCLONE_CONFIG) || (matrix.config == 'zstd' && secrets.RCLONE_CONFIG_ZSTD) || matrix.config-value }}
           disable_base64: ${{ matrix.config == 'plain-text' && 'true' || '' }}
           zstd_config: ${{ matrix.config == 'zstd' && 'true' || '' }}
           version: ${{ matrix.version == 'specified' && (steps.penultimate-unix-like.outputs.version || steps.penultimate-windows.outputs.version) || matrix.version }}
