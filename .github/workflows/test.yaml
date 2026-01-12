@@ -22,8 +22,20 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest, macos-15-intel]
         version: [latest, specified]
-        config: [secrets, plain-text, zstd, config-less]
-        
+        config: [secrets, config-less, plain-text, zstd]
+        include:
+          - config: secrets
+            config-value: ${{ secrets.RCLONE_CONFIG }}
+          - config: config-less
+            config-value: ''
+          - config: plain-text
+            config-value: |
+              [rclone-test-remote]
+              type = http
+              url = https://beta.rclone.org/test/
+          - config: zstd
+            config-value: ${{ secrets.RCLONE_CONFIG_ZSTD }}
+            
     steps:
       - name: Get Rclone penultimate version on Unix-like
         id: penultimate-unix-like
@@ -45,23 +57,13 @@ jobs:
         if: matrix.config != 'plain-text'
         uses: AnimMouse/setup-rclone@main
         with:
-          rclone_config: ${{ matrix.config == 'secrets' && secrets.RCLONE_CONFIG || matrix.config == 'zstd' && secrets.RCLONE_CONFIG_ZSTD || '' }}
+          rclone_config: ${{ matrix.config-value }}
+          disable_base64: ${{ matrix.config == 'plain-text' && 'true' || '' }}
           zstd_config: ${{ matrix.config == 'zstd' && 'true' || '' }}
           version: ${{ matrix.version == 'specified' && (steps.penultimate-unix-like.outputs.version || steps.penultimate-windows.outputs.version) || matrix.version }}
           
-      - name: Setup Rclone using setup-rclone plain text
-        if: matrix.config == 'plain-text'
-        uses: AnimMouse/setup-rclone@main
-        with:
-          rclone_config: |
-            [rclone-test-remote]
-            type = http
-            url = https://beta.rclone.org/test/
-          disable_base64: true
-          version: ${{ matrix.version == 'specified' && (steps.penultimate-unix-like.outputs.version || steps.penultimate-windows.outputs.version) || matrix.version }}
-          
       - name: Test Rclone by listing remotes
-        if: matrix.config != 'plain-text' || matrix.config != 'config-less'
+        if: matrix.config != 'config-less'
         run: rclone listremotes
         
       - name: Test Rclone by listing test remote
