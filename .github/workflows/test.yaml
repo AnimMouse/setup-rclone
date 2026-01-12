@@ -55,8 +55,8 @@ jobs:
         uses: AnimMouse/setup-rclone@main
         with:
           rclone_config: ${{ (matrix.config == 'secrets' && secrets.RCLONE_CONFIG) || (matrix.config == 'zstd' && secrets.RCLONE_CONFIG_ZSTD) || matrix.config-value }}
-          disable_base64: ${{ matrix.config == 'plain-text' && 'true' || '' }}
-          zstd_config: ${{ matrix.config == 'zstd' && 'true' || '' }}
+          disable_base64: ${{ matrix.config == 'plain-text' }}
+          zstd_config: ${{ matrix.config == 'zstd' }}
           version: ${{ matrix.version == 'specified' && (steps.penultimate-unix-like.outputs.version || steps.penultimate-windows.outputs.version) || matrix.version }}
           
       - name: Test Rclone by listing remotes
