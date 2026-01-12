@@ -7,12 +7,7 @@ name: Test setup-rclone
 on:
   push:
     paths:
-      - action.yml
-      - scripts/**
-      - .github/workflows/test.yaml
-  pull_request:
-    paths:
-      - action.yml
+      - action.yaml
       - scripts/**
       - .github/workflows/test.yaml
   schedule:
@@ -20,41 +15,42 @@ on:
   workflow_dispatch:
   
 jobs:
-  test-with-config:
-    if: github.event_name != 'pull_request'
+  test:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        version: [latest, "${{ vars.SPECIFIED_VERSION }}"] # Set the SPECIFIED_VERSION variable to the last previous version in order to pass this test
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-15-intel]
+        version: [latest, specified]
+        config: [secrets, plain-text, zstd, config-less]
         
     steps:
+      - name: Get Rclone penultimate version on Unix-like
+        id: penultimate-unix-like
+        if: (runner.os == 'Linux' || runner.os == 'macOS') && matrix.version == 'specified'
+        run: echo version=$(gh api repos/rclone/rclone/releases -q .[1].tag_name) >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          
+      - name: Get Rclone penultimate version on Windows
+        id: penultimate-windows
+        if: runner.os == 'Windows' && matrix.version == 'specified'
+        run: |
+          $version = (gh api repos/rclone/rclone/releases -q .[1].tag_name)
+          Add-Content $env:GITHUB_OUTPUT version=$version
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          
       - name: Setup Rclone using setup-rclone
+        if: matrix.config != 'plain-text'
         uses: AnimMouse/setup-rclone@main
         with:
-          rclone_config: ${{ secrets.RCLONE_CONFIG }} # Refer to setup-rclone wiki in order to pass this test
-          version: ${{ matrix.version }}
+          rclone_config: ${{ matrix.config == 'secrets' && secrets.RCLONE_CONFIG || matrix.config == 'zstd' && secrets.RCLONE_CONFIG_ZSTD || '' }}
+          zstd_config: ${{ matrix.config == 'zstd' && 'true' || '' }}
+          version: ${{ matrix.version == 'specified' && (steps.penultimate-unix-like.outputs.version || steps.penultimate-windows.outputs.version) || matrix.version }}
           
-      - name: Test Rclone by listing remotes
-        run: rclone listremotes
-        
-      - name: Test Rclone by listing test remote
-        run: 'rclone lsd rclone-test-remote:'
-        
-      - name: Test Rclone by checking version
-        run: rclone version
-        
-  test-with-config-plain-text:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        version: [latest, "${{ vars.SPECIFIED_VERSION }}"]
-        
-    steps:
-      - name: Setup Rclone using setup-rclone
+      - name: Setup Rclone using setup-rclone plain text
+        if: matrix.config == 'plain-text'
         uses: AnimMouse/setup-rclone@main
         with:
           rclone_config: |
@@ -62,47 +58,19 @@ jobs:
             type = http
             url = https://beta.rclone.org/test/
           disable_base64: true
-          version: ${{ matrix.version }}
-          
-      - name: Test Rclone by listing test remote
-        run: 'rclone lsd rclone-test-remote:'
-        
-  test-with-config-zstd:
-    if: github.event_name != 'pull_request'
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        version: [latest, "${{ vars.SPECIFIED_VERSION }}"]
-        
-    steps:
-      - name: Setup Rclone using setup-rclone
-        uses: AnimMouse/setup-rclone@main
-        with:
-          rclone_config: ${{ secrets.RCLONE_CONFIG_ZSTD }}
-          zstd_config: true
-          version: ${{ matrix.version }}
+          version: ${{ matrix.version == 'specified' && (steps.penultimate-unix-like.outputs.version || steps.penultimate-windows.outputs.version) || matrix.version }}
           
       - name: Test Rclone by listing remotes
+        if: matrix.config != 'plain-text' || matrix.config != 'config-less'
         run: rclone listremotes
         
       - name: Test Rclone by listing test remote
+        if: matrix.config != 'config-less'
         run: 'rclone lsd rclone-test-remote:'
         
-  test-config-less:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        version: [latest, "${{ vars.SPECIFIED_VERSION }}"]
-        
-    steps:
-      - name: Setup Rclone using setup-rclone
-        uses: AnimMouse/setup-rclone@main
-        with:
-          version: ${{ matrix.version }}
-          
       - name: Test Rclone by listing config-less test remote
+        if: matrix.config == 'config-less'
         run: 'rclone lsd --http-url https://beta.rclone.org/test/ :http:'
+        
+      - name: Test Rclone by checking version
+        run: rclone version
