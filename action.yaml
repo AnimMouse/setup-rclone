@@ -40,7 +40,7 @@ runs:
         
     - name: Restore Rclone cache
       id: cache
-      uses: actions/cache/restore@v5
+      uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ${{ runner.tool_cache }}/Rclone
         key: Rclone-${{ steps.version-unix-like.outputs.version || steps.version-windows.outputs.version }}-${{ runner.os }}-${{ runner.arch }}
@@ -62,7 +62,7 @@ runs:
         version: ${{ steps.version-windows.outputs.version }}
         
     - name: Install Rclone on tool cache
-      uses: AnimMouse/tool-cache@v1
+      uses: AnimMouse/tool-cache@c58dc704bd326aa5d6f995afe80ac0486ec59c5e # v1.2.0
       with:
         folder_name: Rclone
         cache_hit: ${{ steps.cache.outputs.cache-hit }}
@@ -87,7 +87,7 @@ runs:
         
     - name: Save Rclone cache
       if: '! steps.cache.outputs.cache-hit'
-      uses: actions/cache/save@v5
+      uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ${{ runner.tool_cache }}/Rclone
         key: Rclone-${{ steps.version-unix-like.outputs.version || steps.version-windows.outputs.version }}-${{ runner.os }}-${{ runner.arch }}
